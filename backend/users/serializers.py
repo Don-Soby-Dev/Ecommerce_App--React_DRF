@@ -2,7 +2,7 @@ import re
 
 from rest_framework import serializers
 
-from backend.users.models import User
+from .models import User
 
 EMAIL_REGEX = r"^[\w\.-]+@[\w\.-]+\.\w+$"
 PASSWORD_REGEX = r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
