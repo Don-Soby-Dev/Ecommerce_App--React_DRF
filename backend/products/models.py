@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.utils.text import slugify
 
 from users.models import User
 from django.core.validators import MinValueValidator
@@ -27,7 +28,7 @@ class Product(models.Model):
     )
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="products")
 
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
     is_sold = models.BooleanField(default=False, db_index=True)
     price = models.DecimalField(
@@ -46,3 +47,10 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title)
+            short_id = uuid.uuid4().hex[:6]
+            self.slug = f"{base_slug}-{short_id}"
+        super().save(*args, **kwargs)
