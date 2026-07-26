@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from .models import Product
+from .models import Category, Product
 from .serializers import ProductSerializer
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import (
     IsAuthenticated,
-    AllowAny,
     IsAuthenticatedOrReadOnly,
 )
 
@@ -39,3 +39,18 @@ class ProductModelAPIView(ModelViewSet):
         if self.action in ["create", "update", "partial_update", "destroy"]:
             return [IsAuthenticated()]
         return [IsAuthenticatedOrReadOnly()]
+
+
+class UsersProductListAPIView(ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Product.objects.filter(seller=self.request.user)
+
+
+class CategoryListAPIView(ListAPIView):
+
+    queryset = Category.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]

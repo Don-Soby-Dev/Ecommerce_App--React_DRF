@@ -17,6 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from products.views import CategoryListAPIView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -24,4 +25,5 @@ urlpatterns = [
     path("api/products/", include("products.urls")),  # Included the products app URLs
     path("api/cart/", include("cart.urls")),  # Included the cart app URLs
     path("api/checkout/", include("checkout.urls")),  # Included the checkout app URLs
+    path("api/categories/", CategoryListAPIView.as_view(), name="category_list"),
 ]
