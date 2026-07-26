@@ -1,4 +1,10 @@
-from django.urls import path
+from django.urls import include, path
 from . import views
+from rest_framework.routers import DefaultRouter
 
-urlpatterns = []
+router = DefaultRouter()
+router.register(r"", views.ProductModelAPIView, basename="product")
+
+urlpatterns = [
+    path("", include(router.urls)),
+]
