@@ -1,4 +1,6 @@
 from django.shortcuts import render
+
+from .permissions import IsSellerOrReadOnly
 from .models import Category, Product
 from .serializers import ProductSerializer
 from rest_framework.viewsets import ModelViewSet
@@ -13,7 +15,7 @@ class ProductModelAPIView(ModelViewSet):
 
     queryset = Product.objects.filter(is_sold=False)
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsSellerOrReadOnly]
     lookup_field = "slug"
 
     def get_queryset(self):
@@ -34,11 +36,6 @@ class ProductModelAPIView(ModelViewSet):
             queryset = queryset.filter(title__icontains=search_query)
 
         return queryset
-
-    def get_permissions(self):
-        if self.action in ["create", "update", "partial_update", "destroy"]:
-            return [IsAuthenticated()]
-        return [IsAuthenticatedOrReadOnly()]
 
 
 class UsersProductListAPIView(ListAPIView):
