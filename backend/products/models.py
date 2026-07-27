@@ -33,7 +33,7 @@ class Product(models.Model):
     )
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="products")
 
-    title = models.CharField(max_length=100, unique=True)
+    title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     is_sold = models.BooleanField(default=False, db_index=True)
     price = models.DecimalField(
