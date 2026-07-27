@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 from .permissions import IsSellerOrReadOnly
 from .models import Category, Product
-from .serializers import ProductSerializer
+from .serializers import ProductSerializer, CategorySerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import (
@@ -51,5 +51,5 @@ class UsersProductListAPIView(ListAPIView):
 class CategoryListAPIView(ListAPIView):
 
     queryset = Category.objects.all()
-    serializer_class = ProductSerializer
+    serializer_class = CategorySerializer
     permission_classes = [IsAuthenticatedOrReadOnly]

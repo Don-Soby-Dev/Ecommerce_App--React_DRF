@@ -1,6 +1,6 @@
 import uuid
 from rest_framework.serializers import ModelSerializer, ValidationError
-from .models import Product
+from .models import Product, Category
 from django.utils.text import slugify
 
 
@@ -27,3 +27,10 @@ class ProductSerializer(ModelSerializer):
         validated_data["seller"] = self.context["request"].user
 
         return super().create(validated_data)
+
+
+class CategorySerializer(ModelSerializer):
+    class Meta:
+        model = Category
+        fields = "__all__"
+        read_only_fields = ["id", "slug"]
