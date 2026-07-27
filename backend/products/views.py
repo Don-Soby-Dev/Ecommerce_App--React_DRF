@@ -20,7 +20,9 @@ class ProductModelAPIView(ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+
         params = self.request.query_params
+
         category_slug = params.get("category", None)
         min_price = params.get("min_price", None)
         max_price = params.get("max_price", None)
