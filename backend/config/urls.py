@@ -18,12 +18,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from products.views import CategoryListAPIView
+from checkout.views import CheckoutAPIView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/auth/", include("users.urls")),  # Included the users app URLs
     path("api/products/", include("products.urls")),  # Included the products app URLs
     path("api/cart/", include("cart.urls")),  # Included the cart app URLs
-    path("api/checkout/", include("checkout.urls")),  # Included the checkout app URLs
+    path("api/orders/", include("checkout.urls")),
+    path(
+        "api/checkout/", CheckoutAPIView.as_view(), name="checkout"
+    ),  # Included the checkout app URLs
     path("api/categories/", CategoryListAPIView.as_view(), name="category_list"),
 ]

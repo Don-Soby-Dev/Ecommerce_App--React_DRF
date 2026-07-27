@@ -1,4 +1,9 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+from rest_framework.routers import DefaultRouter
 
-urlpatterns = []
+router = DefaultRouter()
+
+router.register(r"", views.OrderViewSet, basename="order")
+
+urlpatterns = [path("", include(router.urls))]
