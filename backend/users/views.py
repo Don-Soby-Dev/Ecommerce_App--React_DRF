@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
+from django.conf import settings
 
 from .serializers import UserSerializer, CustomTokenObtainPairSerializer
 
@@ -42,15 +43,31 @@ class LogoutAPIView(APIView):
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
 
-# class GetUserAPIView(APIView):
+        if response.status_code == 200:
+            access_token = response.data.get("access")
+            refresh_token = response.data.get("refresh")
 
-#     permission_classes = [IsAuthenticated]
+            custom_response = Response(
+                {"success": True, "data": {"access_token": access_token}},
+                status=status.HTTP_200_OK,
+            )
 
-#     def get(self, request):
-#         user = request.user
-#         serializer = UserSerializer(user)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
+            custom_response.set_cookie(
+                key="refresh_token",
+                value=refresh_token,
+                httponly=True,
+                secure=not settings.DEBUG,
+                samesite="Lax",
+                max_age=7 * 24 * 60 * 60,
+                path="/api/auth/token/refresh/",
+            )
+
+            return custom_response
+
+        return response
 
 
 class GetUserAPIView(generics.RetrieveAPIView):
