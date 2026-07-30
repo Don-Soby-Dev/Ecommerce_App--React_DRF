@@ -2,8 +2,10 @@ from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.exceptions import TokenError
 from django.conf import settings
 
 from .serializers import UserSerializer, CustomTokenObtainPairSerializer
@@ -68,6 +70,28 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             return custom_response
 
         return response
+
+
+class CustomTokenRefreshView(APIView):
+
+    def post(self, request):
+
+        refresh_token = request.COOKIES.get("refresh")
+
+        if not refresh_token:
+            raise AuthenticationFailed("refresh token missing.")
+
+        try:
+            token = RefreshToken(refresh_token)
+            new_access = str(token.access_token)
+
+            return Response(
+                {"success": True, "data": {"access_token": new_access}},
+                status=status.HTTP_200_OK,
+            )
+
+        except TokenError:
+            raise AuthenticationFailed("Invalid or expired refresh token.")
 
 
 class GetUserAPIView(generics.RetrieveAPIView):
