@@ -12,15 +12,13 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action) => {
-      const { user, accessToken, refreshToken } = action.payload;
+      const { user, accessToken } = action.payload;
       state.user = user;
       state.accessToken = accessToken;
-      state.refreshToken = refreshToken;
     },
     logOut: (state) => {
       state.user = null;
       state.accessToken = null;
-      state.refreshToken = null;
       state.status = "idle";
       state.error = null;
     },
@@ -32,21 +30,23 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(loginUser.pending, (state) => {
-      state.status = "loading";
-      state.error = null;
-    })
-    .addCase(loginUser.fulfilled, (state, action) => {
-      state.status = "succeeded";
-      state.user = action.payload.user;
-      state.accessToken = action.payload.accessToken;
-    })
-    .addCase(loginUser.rejected, (state, action) => {
-      state.status = "failed";
-      state.error = action.payload;
-    })
-  }
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      });
+  },
 });
 
-export const { setCredentials, logOut, setAuthStatus, setAuthError } = authSlice.actions;
+export const { setCredentials, logOut, setAuthStatus, setAuthError } =
+  authSlice.actions;
 export default authSlice.reducer;
