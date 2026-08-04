@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { loginUser, checkAuth } from "./authThunks";
 
 const initialState = {
   user: null,
   accessToken: null,
   status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
+  isCheckingAuth: true,
   error: null,
 };
 
@@ -37,12 +39,24 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.user = action.payload.user;
-        state.accessToken = action.payload.accessToken;
+        state.user = action.payload.user || null;
+        state.accessToken =
+          action.payload.accessToken || action.payload.access_token || null;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+      })
+      .addCase(checkAuth.pending, (state) => {
+        state.isCheckingAuth = true;
+      })
+      .addCase(checkAuth.fulfilled, (state, action) => {
+        state.isCheckingAuth = false;
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+      })
+      .addCase(checkAuth.rejected, (state) => {
+        state.isCheckingAuth = false;
       });
   },
 });

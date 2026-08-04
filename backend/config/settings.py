@@ -49,11 +49,11 @@ INSTALLED_APPS = [
     "products",
     "cart",
     "checkout",
-    "crosheaders",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
-    "crosheaders.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",

@@ -61,8 +61,13 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             access_token = response.data.get("access")
             refresh_token = response.data.get("refresh")
 
+            user_data = response.data.get("user")
+
             custom_response = Response(
-                {"success": True, "data": {"access_token": access_token}},
+                {
+                    "success": True,
+                    "data": {"access_token": access_token, "user": user_data},
+                },
                 status=status.HTTP_200_OK,
             )
 
