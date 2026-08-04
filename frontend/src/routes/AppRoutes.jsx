@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "../pages/AuthPage";
 import ProductListingPage from "../pages/ProductListingPage";
 import ProtectedRoute from "./ProdectedRoute";
+import Layout from "../components/layout";
 
 // Temporary placeholder components for routes
 const ProductDetailPage = () => (
@@ -35,16 +36,21 @@ const MyListingsPage = () => (
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Public Routes */}
+      {/* Auth Route (Standalone, No Layout Header/Footer) */}
       <Route path="/auth" element={<AuthPage />} />
-      <Route path="/" element={<ProductListingPage />} />
-      <Route path="/products" element={<ProductListingPage />} />
-      <Route path="/products/:slug" element={<ProductDetailPage />} />
 
-      {/* Protected Routes (Auth Required) */}
-      <Route element={<ProtectedRoute />}>
-        <Route path="/products/sell" element={<SellPage />} />
-        <Route path="/products/mine" element={<MyListingsPage />} />
+      {/* Main Layout Wrapper for all non-auth pages */}
+      <Route element={<Layout />}>
+        {/* Public Routes */}
+        <Route path="/" element={<ProductListingPage />} />
+        <Route path="/products" element={<ProductListingPage />} />
+        <Route path="/products/:slug" element={<ProductDetailPage />} />
+
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/products/sell" element={<SellPage />} />
+          <Route path="/products/mine" element={<MyListingsPage />} />
+        </Route>
       </Route>
 
       {/* Fallback */}
