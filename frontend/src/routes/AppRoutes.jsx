@@ -1,10 +1,11 @@
-import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "../pages/AuthPage";
 import ProductListingPage from "../pages/ProductListingPage";
 import ProductDetailPage from "../pages/ProductDetailPage";
 import SellPage from "../pages/SellPage";
 import CartPage from "../pages/CartPage";
+import CheckoutPage from "../pages/CheckoutPage";
+import OrderPage from "../pages/OrderPage";
 import ProtectedRoute from "./ProdectedRoute";
 import Layout from "../components/layout";
 
@@ -26,6 +27,8 @@ const AppRoutes = () => {
           <Route path="/products/sell" element={<SellPage />} />
           <Route path="/products/mine" element={<SellPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/orders" element={<OrderPage />} />
         </Route>
       </Route>
 

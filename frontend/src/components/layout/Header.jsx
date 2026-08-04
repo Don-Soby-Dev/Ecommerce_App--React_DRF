@@ -1,7 +1,15 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { User, LogOut, PlusCircle, ShoppingBag, ShoppingCart, ChevronDown } from "lucide-react";
+import {
+  User,
+  LogOut,
+  PlusCircle,
+  ShoppingBag,
+  ShoppingCart,
+  ChevronDown,
+  ListChecks,
+} from "lucide-react";
 import { logoutUser } from "../../features/auth/authThunks";
 
 const Header = () => {
@@ -87,7 +95,11 @@ const Header = () => {
                   className="flex items-center gap-2 p-1.5 pl-3 pr-2.5 rounded-full border border-gray-200 hover:border-indigo-300 hover:bg-gray-50 transition-all focus:outline-none"
                 >
                   <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
-                    {user?.username ? user.username.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
+                    {user?.username ? (
+                      user.username.charAt(0).toUpperCase()
+                    ) : (
+                      <User className="w-4 h-4" />
+                    )}
                   </div>
                   <span className="text-sm font-semibold text-gray-700 max-w-[100px] truncate hidden sm:inline">
                     {user?.username || "Account"}
@@ -102,12 +114,24 @@ const Header = () => {
                     className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200"
                   >
                     <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="text-xs text-gray-400 font-medium">Signed in as</p>
+                      <p className="text-xs text-gray-400 font-medium">
+                        Signed in as
+                      </p>
                       <p className="text-sm font-bold text-gray-800 truncate">
                         {user?.email || user?.username || "User"}
                       </p>
                     </div>
 
+                    <button
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        navigate("/orders");
+                      }}
+                      className="w-full flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <ListChecks className="w-4 h-4" />
+                      <span>My Orders</span>
+                    </button>
                     <button
                       onClick={handleLogout}
                       className="w-full flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
