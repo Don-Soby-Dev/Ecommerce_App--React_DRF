@@ -54,3 +54,11 @@ class UserSerializer(serializers.ModelSerializer):
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     username_field = User.EMAIL_FIELD
+
+    def validate(self, attrs):
+
+        data = super().validate(attrs)
+
+        data["user"] = UserSerializer(self.user).data
+
+        return data

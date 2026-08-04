@@ -20,9 +20,9 @@ export const apiRegisterUser = async (data) => {
   }
 };
 
-export const apiRefreshTokenUser = async (data) => {
+export const apiRefreshTokenUser = async () => {
   try {
-    const response = await api.post("/auth/refresh/", data);
+    const response = await api.post("/auth/token/refresh/");
     return response.data;
   } catch (error) {
     throw error;

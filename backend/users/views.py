@@ -32,14 +32,23 @@ class LogoutAPIView(APIView):
 
     def post(self, request):
 
-        refresh_token = request.data.get("refresh_token")
+        refresh_token = request.COOKIES.get("refresh_token")
 
-        token = RefreshToken(refresh_token)
-        token.blacklist()
+        if refresh_token:
+            try:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+            except TokenError:
+                pass
 
-        return Response(
-            {"message": "User logged out successfully."}, status=status.HTTP_200_OK
+        response = Response(
+            {"success": True, "data": {"message": "User logged out successfully."}}
         )
+        response.delete_cookie(
+            key="refresh_token", path="/api/auth/token/refresh/", samesite="Lax"
+        )
+
+        return response
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -76,7 +85,7 @@ class CustomTokenRefreshView(APIView):
 
     def post(self, request):
 
-        refresh_token = request.COOKIES.get("refresh")
+        refresh_token = request.COOKIES.get("refresh_token")
 
         if not refresh_token:
             raise AuthenticationFailed("refresh token missing.")
