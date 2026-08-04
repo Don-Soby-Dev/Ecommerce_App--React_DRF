@@ -18,11 +18,6 @@ export const apiFetchProductBySlug = async (slug) => {
   return response.data;
 };
 
-export const apiFetchMyProducts = async () => {
-  const response = await api.get("/products/mine/");
-  return response.data;
-};
-
 export const apiFetchCategories = async () => {
   const response = await api.get("/categories/");
   return response.data;

@@ -34,20 +34,6 @@ export const fetchProductBySlug = createAsyncThunk(
   },
 );
 
-export const fetchMyProducts = createAsyncThunk(
-  "products/fetchMyProducts",
-  async (_, { rejectWithValue }) => {
-    try {
-      const data = await apiFetchMyProducts();
-      return data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.detail || "Failed to load your listings.",
-      );
-    }
-  },
-);
-
 export const fetchCategories = createAsyncThunk(
   "products/fetchCategories",
   async (_, { rejectWithValue }) => {

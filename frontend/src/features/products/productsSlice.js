@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   fetchProducts,
   fetchProductBySlug,
-  fetchMyProducts,
   fetchCategories,
 } from "./productsThunk";
 
@@ -17,7 +16,6 @@ const initialState = {
     search: "",
   },
   status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
-  myItemsStatus: "idle",
   categoriesStatus: "idle",
   error: null,
 };
@@ -68,17 +66,6 @@ const productsSlice = createSlice({
       .addCase(fetchProductBySlug.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
-      })
-      // Fetch user's own products
-      .addCase(fetchMyProducts.pending, (state) => {
-        state.myItemsStatus = "loading";
-      })
-      .addCase(fetchMyProducts.fulfilled, (state, action) => {
-        state.myItemsStatus = "succeeded";
-        state.myItems = action.payload;
-      })
-      .addCase(fetchMyProducts.rejected, (state) => {
-        state.myItemsStatus = "failed";
       })
       // Fetch categories
       .addCase(fetchCategories.pending, (state) => {
