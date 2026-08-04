@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductBySlug } from "../features/products/productsThunk";
 import { clearSelectedProduct } from "../features/products/productsSlice";
-import { ArrowLeft, Tag, Calendar, User, ShoppingCart, CheckCircle, XCircle } from "lucide-react";
+import { addCartItem } from "../features/cart/cartThunk";
+import { ArrowLeft, Tag, Calendar, User, ShoppingCart, CheckCircle, XCircle, Check } from "lucide-react";
 
 const ProductDetailPage = () => {
   const { slug } = useParams();
@@ -13,6 +14,26 @@ const ProductDetailPage = () => {
   const { selected: product, status, error } = useSelector(
     (state) => state.products
   );
+  const { accessToken } = useSelector((state) => state.auth);
+
+  const [addStatus, setAddStatus] = useState("idle"); // 'idle' | 'loading' | 'added' | 'error'
+  const [addError, setAddError] = useState("");
+
+  const handleAddToCart = async () => {
+    if (!accessToken) {
+      navigate("/auth");
+      return;
+    }
+    setAddStatus("loading");
+    setAddError("");
+    const result = await dispatch(addCartItem(product.id));
+    if (addCartItem.fulfilled.match(result)) {
+      setAddStatus("added");
+    } else {
+      setAddStatus("error");
+      setAddError(result.payload || "Failed to add to cart.");
+    }
+  };
 
   useEffect(() => {
     if (slug) {
@@ -143,13 +164,42 @@ const ProductDetailPage = () => {
             </div>
 
             {/* Action */}
-            <div className="pt-6 mt-6 border-t border-gray-100">
+            <div className="pt-6 mt-6 border-t border-gray-100 space-y-3">
+              {addError && (
+                <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm text-center">
+                  {addError}
+                </div>
+              )}
               <button
-                disabled={product.is_sold}
-                className="w-full py-4 px-6 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold text-base rounded-2xl shadow-xl shadow-indigo-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                onClick={handleAddToCart}
+                disabled={product.is_sold || addStatus === "loading" || addStatus === "added"}
+                className={`w-full py-4 px-6 font-bold text-base rounded-2xl shadow-xl transition-all duration-200 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
+                  addStatus === "added"
+                    ? "bg-emerald-600 text-white shadow-emerald-500/25"
+                    : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-indigo-500/25 disabled:opacity-50"
+                }`}
               >
-                <ShoppingCart className="w-5 h-5" />
-                {product.is_sold ? "Item Sold" : "Buy / Contact Seller"}
+                {addStatus === "loading" ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Adding...
+                  </>
+                ) : addStatus === "added" ? (
+                  <>
+                    <Check className="w-5 h-5" />
+                    Added to Cart
+                  </>
+                ) : product.is_sold ? (
+                  "Item Sold"
+                ) : (
+                  <>
+                    <ShoppingCart className="w-5 h-5" />
+                    Add to Cart
+                  </>
+                )}
               </button>
             </div>
           </div>

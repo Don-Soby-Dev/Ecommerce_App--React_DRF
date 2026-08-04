@@ -1,8 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { fetchCart, addCartItem, removeCartItem, clearCart } from "./cartThunk";
 
 const initialState = {
-  items: [],
+  cartId: null,
+  items: [], // Array of CartItem objects with nested product data
   status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
+  actionStatus: "idle", // For add/remove/clear operations
   error: null,
 };
 
@@ -10,43 +13,67 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addToCart: (state, action) => {
-      const existingItem = state.items.find((item) => item.id === action.payload.id);
-      if (existingItem) {
-        existingItem.quantity += action.payload.quantity || 1;
-      } else {
-        state.items.push({ ...action.payload, quantity: action.payload.quantity || 1 });
-      }
+    resetCartError: (state) => {
+      state.error = null;
     },
-    removeFromCart: (state, action) => {
-      state.items = state.items.filter((item) => item.id !== action.payload);
-    },
-    updateQuantity: (state, action) => {
-      const { id, quantity } = action.payload;
-      const item = state.items.find((i) => i.id === id);
-      if (item && quantity > 0) {
-        item.quantity = quantity;
-      }
-    },
-    clearCart: (state) => {
-      state.items = [];
-    },
-    setCartStatus: (state, action) => {
-      state.status = action.payload;
-    },
-    setCartError: (state, action) => {
-      state.error = action.payload;
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Fetch cart
+      .addCase(fetchCart.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchCart.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.cartId = action.payload.id;
+        state.items = action.payload.items || [];
+      })
+      .addCase(fetchCart.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      // Add item
+      .addCase(addCartItem.pending, (state) => {
+        state.actionStatus = "loading";
+        state.error = null;
+      })
+      .addCase(addCartItem.fulfilled, (state, action) => {
+        state.actionStatus = "succeeded";
+        state.items.push(action.payload);
+      })
+      .addCase(addCartItem.rejected, (state, action) => {
+        state.actionStatus = "failed";
+        state.error = action.payload;
+      })
+      // Remove item
+      .addCase(removeCartItem.pending, (state) => {
+        state.actionStatus = "loading";
+        state.error = null;
+      })
+      .addCase(removeCartItem.fulfilled, (state, action) => {
+        state.actionStatus = "succeeded";
+        state.items = state.items.filter((item) => item.id !== action.payload);
+      })
+      .addCase(removeCartItem.rejected, (state, action) => {
+        state.actionStatus = "failed";
+        state.error = action.payload;
+      })
+      // Clear cart
+      .addCase(clearCart.pending, (state) => {
+        state.actionStatus = "loading";
+        state.error = null;
+      })
+      .addCase(clearCart.fulfilled, (state) => {
+        state.actionStatus = "succeeded";
+        state.items = [];
+      })
+      .addCase(clearCart.rejected, (state, action) => {
+        state.actionStatus = "failed";
+        state.error = action.payload;
+      });
   },
 });
 
-export const {
-  addToCart,
-  removeFromCart,
-  updateQuantity,
-  clearCart,
-  setCartStatus,
-  setCartError,
-} = cartSlice.actions;
-
+export const { resetCartError } = cartSlice.actions;
 export default cartSlice.reducer;

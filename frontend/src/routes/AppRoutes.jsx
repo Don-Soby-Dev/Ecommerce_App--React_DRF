@@ -4,6 +4,7 @@ import AuthPage from "../pages/AuthPage";
 import ProductListingPage from "../pages/ProductListingPage";
 import ProductDetailPage from "../pages/ProductDetailPage";
 import SellPage from "../pages/SellPage";
+import CartPage from "../pages/CartPage";
 import ProtectedRoute from "./ProdectedRoute";
 import Layout from "../components/layout";
 
@@ -24,6 +25,7 @@ const AppRoutes = () => {
         <Route element={<ProtectedRoute />}>
           <Route path="/products/sell" element={<SellPage />} />
           <Route path="/products/mine" element={<SellPage />} />
+          <Route path="/cart" element={<CartPage />} />
         </Route>
       </Route>
 

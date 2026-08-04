@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { User, LogOut, PlusCircle, ShoppingBag, ChevronDown } from "lucide-react";
+import { User, LogOut, PlusCircle, ShoppingBag, ShoppingCart, ChevronDown } from "lucide-react";
 import { logoutUser } from "../../features/auth/authThunks";
 
 const Header = () => {
@@ -12,6 +12,7 @@ const Header = () => {
   const navigate = useNavigate();
 
   const { accessToken, user } = useSelector((state) => state.auth);
+  const cartItems = useSelector((state) => state.cart.items);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -57,6 +58,21 @@ const Header = () => {
             <PlusCircle className="w-4 h-4" />
             <span>Sell</span>
           </Link>
+
+          {/* Cart Icon */}
+          {accessToken && (
+            <Link
+              to="/cart"
+              className="relative flex items-center justify-center w-10 h-10 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-xl transition-all"
+            >
+              <ShoppingCart className="w-5 h-5" />
+              {cartItems.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-indigo-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                  {cartItems.length}
+                </span>
+              )}
+            </Link>
+          )}
 
           {/* User Section / Dropdown */}
           <div className="relative ml-2" ref={dropdownRef}>
