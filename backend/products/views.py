@@ -45,7 +45,14 @@ class UsersProductListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Product.objects.filter(seller=self.request.user)
+        queryset = Product.objects.filter(seller=self.request.user)
+        is_sold_param = self.request.query_params.get("is_sold", None)
+        if is_sold_param is not None:
+            if is_sold_param.lower() in ["true", "1"]:
+                queryset = queryset.filter(is_sold=True)
+            elif is_sold_param.lower() in ["false", "0"]:
+                queryset = queryset.filter(is_sold=False)
+        return queryset
 
 
 class CategoryListAPIView(ListAPIView):

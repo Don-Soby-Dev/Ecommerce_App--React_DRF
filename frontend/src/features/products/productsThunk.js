@@ -2,7 +2,6 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   apiFetchProducts,
   apiFetchProductBySlug,
-  apiFetchMyProducts,
   apiFetchCategories,
 } from "./productsAPI";
 
