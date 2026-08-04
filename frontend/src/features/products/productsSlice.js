@@ -2,16 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   fetchProducts,
   fetchProductBySlug,
-  createProduct,
-  updateProduct,
-  deleteProduct,
   fetchMyProducts,
   fetchCategories,
 } from "./productsThunk";
 
 const initialState = {
   items: [],
-  myItems: [],
   categories: [],
   selected: null,
   filters: {
@@ -72,29 +68,6 @@ const productsSlice = createSlice({
       .addCase(fetchProductBySlug.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
-      })
-      // Create product
-      .addCase(createProduct.fulfilled, (state, action) => {
-        state.items.unshift(action.payload);
-        state.myItems.unshift(action.payload);
-      })
-      // Update product
-      .addCase(updateProduct.fulfilled, (state, action) => {
-        const index = state.items.findIndex((p) => p.slug === action.payload.slug);
-        if (index !== -1) state.items[index] = action.payload;
-        const myIndex = state.myItems.findIndex((p) => p.slug === action.payload.slug);
-        if (myIndex !== -1) state.myItems[myIndex] = action.payload;
-        if (state.selected?.slug === action.payload.slug) {
-          state.selected = action.payload;
-        }
-      })
-      // Delete product
-      .addCase(deleteProduct.fulfilled, (state, action) => {
-        state.items = state.items.filter((p) => p.slug !== action.payload);
-        state.myItems = state.myItems.filter((p) => p.slug !== action.payload);
-        if (state.selected?.slug === action.payload) {
-          state.selected = null;
-        }
       })
       // Fetch user's own products
       .addCase(fetchMyProducts.pending, (state) => {

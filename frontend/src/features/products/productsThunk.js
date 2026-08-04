@@ -2,9 +2,6 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   apiFetchProducts,
   apiFetchProductBySlug,
-  apiCreateProduct,
-  apiUpdateProduct,
-  apiDeleteProduct,
   apiFetchMyProducts,
   apiFetchCategories,
 } from "./productsAPI";
@@ -17,10 +14,10 @@ export const fetchProducts = createAsyncThunk(
       return data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.detail || "Failed to load products."
+        error.response?.data?.detail || "Failed to load products.",
       );
     }
-  }
+  },
 );
 
 export const fetchProductBySlug = createAsyncThunk(
@@ -31,52 +28,10 @@ export const fetchProductBySlug = createAsyncThunk(
       return data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.detail || "Failed to load product details."
+        error.response?.data?.detail || "Failed to load product details.",
       );
     }
-  }
-);
-
-export const createProduct = createAsyncThunk(
-  "products/createProduct",
-  async (productData, { rejectWithValue }) => {
-    try {
-      const data = await apiCreateProduct(productData);
-      return data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data || "Failed to create product listing."
-      );
-    }
-  }
-);
-
-export const updateProduct = createAsyncThunk(
-  "products/updateProduct",
-  async ({ slug, productData }, { rejectWithValue }) => {
-    try {
-      const data = await apiUpdateProduct(slug, productData);
-      return data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data || "Failed to update product."
-      );
-    }
-  }
-);
-
-export const deleteProduct = createAsyncThunk(
-  "products/deleteProduct",
-  async (slug, { rejectWithValue }) => {
-    try {
-      await apiDeleteProduct(slug);
-      return slug;
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.detail || "Failed to delete product."
-      );
-    }
-  }
+  },
 );
 
 export const fetchMyProducts = createAsyncThunk(
@@ -87,10 +42,10 @@ export const fetchMyProducts = createAsyncThunk(
       return data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.detail || "Failed to load your listings."
+        error.response?.data?.detail || "Failed to load your listings.",
       );
     }
-  }
+  },
 );
 
 export const fetchCategories = createAsyncThunk(
@@ -101,8 +56,8 @@ export const fetchCategories = createAsyncThunk(
       return data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.detail || "Failed to load categories."
+        error.response?.data?.detail || "Failed to load categories.",
       );
     }
-  }
+  },
 );

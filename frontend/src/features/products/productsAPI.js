@@ -18,21 +18,6 @@ export const apiFetchProductBySlug = async (slug) => {
   return response.data;
 };
 
-export const apiCreateProduct = async (data) => {
-  const response = await api.post("/products/", data);
-  return response.data;
-};
-
-export const apiUpdateProduct = async (slug, data) => {
-  const response = await api.patch(`/products/${slug}/`, data);
-  return response.data;
-};
-
-export const apiDeleteProduct = async (slug) => {
-  const response = await api.delete(`/products/${slug}/`);
-  return response.data;
-};
-
 export const apiFetchMyProducts = async () => {
   const response = await api.get("/products/mine/");
   return response.data;
