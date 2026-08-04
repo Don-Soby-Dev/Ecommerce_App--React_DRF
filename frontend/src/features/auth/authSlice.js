@@ -22,6 +22,7 @@ const authSlice = createSlice({
       state.user = null;
       state.accessToken = null;
       state.status = "idle";
+      state.isCheckingAuth = false;
       state.error = null;
     },
     setAuthStatus: (state, action) => {
