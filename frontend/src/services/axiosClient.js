@@ -1,0 +1,97 @@
+import axios from "axios";
+import { store } from "../app/store";
+import { setCredentials, logOut } from "../features/auth/authSlice";
+import { apiRefreshTokenUser } from "../features/auth/authAPI";
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true,
+});
+
+api.interceptors.request.use(
+  (confg) => {
+    const token = store.getState().auth.accessToken;
+
+    if (token) {
+      confg.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return confg;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((promise) => {
+    if (error) {
+      promise.reject(error);
+    } else {
+      promise.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response.status === 401 && !originalRequest._retry) {
+      if (
+        originalRequest.url.includes("/auth/token/refresh/") ||
+        originalRequest.url.includes("/auth/login/")
+      ) {
+        return Promise.reject(error);
+      }
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const response = await apiRefreshTokenUser();
+
+        const newAccessToken = response.data.data.access_token;
+
+        store.dispatch(setCredentials({ accessToken: newAccessToken }));
+
+        processQueue(null, newAccessToken);
+
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        return api(originalRequest);
+      } catch (error) {
+        processQueue(error, null);
+
+        store.dispatch(logOut());
+
+        return Promise.reject(error);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+    return Promise.reject(error);
+  },
+);
+
+export default api;
