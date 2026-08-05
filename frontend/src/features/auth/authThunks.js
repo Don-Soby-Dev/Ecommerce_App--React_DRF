@@ -1,5 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { apiLoginUser, apiLogoutUser, apiRefreshTokenUser, apiGetUser } from "./authAPI";
+import {
+  apiLoginUser,
+  apiLogoutUser,
+  apiRefreshTokenUser,
+  apiGetUser,
+} from "./authAPI";
 import { logOut, setCredentials } from "./authSlice";
 
 export const loginUser = createAsyncThunk(
@@ -28,19 +33,19 @@ export const checkAuth = createAsyncThunk(
     try {
       const refreshResponse = await apiRefreshTokenUser();
       const newAccessToken = refreshResponse.data.access_token;
-      
+
       dispatch(setCredentials({ accessToken: newAccessToken, user: null }));
-      
+
       const userResponse = await apiGetUser();
       const user = userResponse.user || userResponse.data?.user || userResponse;
-      
+
       dispatch(setCredentials({ accessToken: newAccessToken, user }));
       return { accessToken: newAccessToken, user };
     } catch (error) {
       dispatch(logOut());
       return rejectWithValue("Session expired or unauthenticated.");
     }
-  }
+  },
 );
 
 export const logoutUser = createAsyncThunk(
@@ -57,4 +62,3 @@ export const logoutUser = createAsyncThunk(
     }
   },
 );
-

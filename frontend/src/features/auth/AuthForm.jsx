@@ -84,22 +84,30 @@ const AuthForm = () => {
     if (isLogin) {
       try {
         const resultAction = await dispatch(
-          loginUser({ email: formData.email, password: formData.password })
+          loginUser({ email: formData.email, password: formData.password }),
         );
+
         if (loginUser.fulfilled.match(resultAction)) {
           navigate("/");
-        } else if (loginUser.rejected.match(resultAction)) {
-          const payload = resultAction.payload;
-          if (typeof payload === "string") {
-            setApiError(payload);
-          } else if (payload && typeof payload === "object") {
-            if (payload.detail) setApiError(payload.detail);
-            else if (payload.non_field_errors)
-              setApiError(payload.non_field_errors.join(" "));
-            else setApiError("Login failed. Please check your credentials.");
-          } else {
-            setApiError("Login failed. Please check your credentials.");
-          }
+          return;
+        }
+
+        const payload =
+          resultAction.payload ||
+          resultAction.error?.message ||
+          resultAction.error?.name;
+
+        console.log("login failed", payload);
+
+        if (typeof payload === "string") {
+          setApiError(payload);
+        } else if (payload && typeof payload === "object") {
+          if (payload.detail) setApiError(payload.detail);
+          else if (payload.non_field_errors)
+            setApiError(payload.non_field_errors.join(" "));
+          else setApiError("Login failed. Please check your credentials.");
+        } else {
+          setApiError("Login failed. Please check your credentials.");
         }
       } catch (err) {
         setApiError("An unexpected error occurred during login.");
@@ -111,7 +119,9 @@ const AuthForm = () => {
           email: formData.email,
           password: formData.password,
         });
-        setSuccessMessage("Registration successful! Please sign in to continue.");
+        setSuccessMessage(
+          "Registration successful! Please sign in to continue.",
+        );
         setIsLogin(true);
         setFormData({ username: "", email: "", password: "" });
       } catch (err) {
@@ -121,7 +131,9 @@ const AuthForm = () => {
             const fieldErrors = {};
             let generalErr = "";
             Object.keys(data).forEach((key) => {
-              const val = Array.isArray(data[key]) ? data[key].join(" ") : data[key];
+              const val = Array.isArray(data[key])
+                ? data[key].join(" ")
+                : data[key];
               if (key === "username" || key === "email" || key === "password") {
                 fieldErrors[key] = val;
               } else {
@@ -248,7 +260,10 @@ const AuthForm = () => {
         >
           {status === "loading" ? (
             <span className="flex items-center justify-center gap-2">
-              <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                viewBox="0 0 24 24"
+              >
                 <circle
                   className="opacity-25"
                   cx="12"
