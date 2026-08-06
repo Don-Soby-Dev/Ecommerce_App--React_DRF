@@ -59,7 +59,7 @@ const CartSideBar = ({
       {showCheckoutButton && !onConfirm && (
         <Link
           to="/checkout"
-          className={`w-full py-3.5 px-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold text-sm rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/35 transition-all duration-200 flex items-center justify-center gap-2 ${
+          className={`w-full py-3.5 px-4 bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold text-sm rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/35 transition-all duration-200 flex items-center justify-center gap-2 ${
             items.length === 0 ? "opacity-50 pointer-events-none" : ""
           }`}
         >
@@ -72,7 +72,7 @@ const CartSideBar = ({
         <button
           onClick={onConfirm}
           disabled={isConfirmDisabled}
-          className="w-full py-3.5 px-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold text-sm rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/35 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+          className="w-full py-3.5 px-4 bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold text-sm rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/35 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
         >
           <CreditCard className="w-4 h-4" />
           {confirmLoading ? "Processing Order..." : confirmText}

@@ -159,7 +159,7 @@ const AuthForm = () => {
   return (
     <div className="w-full max-w-md p-8 bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-gray-100 transition-all duration-300">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-extrabold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+        <h2 className="text-3xl font-extrabold bg-linear-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
           {isLogin ? "Welcome Back" : "Create Account"}
         </h2>
         <p className="text-gray-500 mt-2 text-sm">
@@ -256,7 +256,7 @@ const AuthForm = () => {
         <button
           type="submit"
           disabled={status === "loading"}
-          className="w-full py-3.5 px-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/35 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-[0.98]"
+          className="w-full py-3.5 px-4 bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/35 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-[0.98]"
         >
           {status === "loading" ? (
             <span className="flex items-center justify-center gap-2">

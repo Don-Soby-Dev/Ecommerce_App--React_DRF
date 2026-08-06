@@ -16,7 +16,7 @@ const SellPage = () => {
   const dispatch = useDispatch();
 
   const { myProducts, filterStatus, status, actionStatus, error } = useSelector(
-    (state) => state.sell
+    (state) => state.sell,
   );
   const { categories } = useSelector((state) => state.products);
 
@@ -53,7 +53,7 @@ const SellPage = () => {
   const handleSubmitForm = async (formData) => {
     if (editingProduct) {
       const result = await dispatch(
-        updateProduct({ slug: editingProduct.slug, productData: formData })
+        updateProduct({ slug: editingProduct.slug, productData: formData }),
       );
       if (updateProduct.fulfilled.match(result)) {
         setActiveTab("listings");
@@ -108,7 +108,7 @@ const SellPage = () => {
               className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
                 activeTab === "form" && !editingProduct
                   ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20"
-                  : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-md shadow-indigo-500/20"
+                  : "bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-md shadow-indigo-500/20"
               }`}
             >
               <Plus className="w-4 h-4" />
@@ -171,7 +171,9 @@ const SellPage = () => {
             {status === "succeeded" && myProducts.length === 0 && (
               <div className="bg-white rounded-2xl p-12 text-center border border-gray-100 my-4 shadow-sm">
                 <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-gray-800">No products found</h3>
+                <h3 className="text-lg font-bold text-gray-800">
+                  No products found
+                </h3>
                 <p className="text-gray-500 text-sm mt-1 mb-6">
                   You haven't posted any items matching this filter yet.
                 </p>
@@ -187,7 +189,10 @@ const SellPage = () => {
             {status === "succeeded" && myProducts.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {myProducts.map((product) => (
-                  <div key={product.id || product.slug} className="relative group">
+                  <div
+                    key={product.id || product.slug}
+                    className="relative group"
+                  >
                     <ProductCard product={product} />
 
                     {/* Left side edit overlay button */}

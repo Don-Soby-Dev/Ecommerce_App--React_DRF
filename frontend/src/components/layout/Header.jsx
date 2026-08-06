@@ -44,7 +44,7 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Name */}
         <Link to="/" className="flex items-center gap-2">
-          <span className="text-2xl font-black bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent tracking-tight hover:opacity-90 transition-opacity">
+          <span className="text-2xl font-black bg-linear-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent tracking-tight hover:opacity-90 transition-opacity">
             OLX
           </span>
         </Link>
@@ -61,7 +61,7 @@ const Header = () => {
 
           <Link
             to="/products/sell"
-            className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 rounded-xl shadow-md shadow-indigo-500/20 transition-all duration-200"
+            className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 rounded-xl shadow-md shadow-indigo-500/20 transition-all duration-200"
           >
             <PlusCircle className="w-4 h-4" />
             <span>Sell</span>

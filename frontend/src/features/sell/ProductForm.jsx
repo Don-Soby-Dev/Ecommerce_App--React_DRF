@@ -85,7 +85,11 @@ const ProductForm = ({
   };
 
   const handleDeleteClick = () => {
-    if (window.confirm("Are you sure you want to delete this listing? This action cannot be undone.")) {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this listing? This action cannot be undone.",
+      )
+    ) {
       onDelete();
     }
   };
@@ -107,9 +111,7 @@ const ProductForm = ({
 
       {apiError && (
         <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
-          {typeof apiError === "string"
-            ? apiError
-            : JSON.stringify(apiError)}
+          {typeof apiError === "string" ? apiError : JSON.stringify(apiError)}
         </div>
       )}
 
@@ -243,7 +245,10 @@ const ProductForm = ({
               onChange={handleChange}
               className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300"
             />
-            <label htmlFor="is_sold" className="text-sm font-semibold text-gray-700 cursor-pointer">
+            <label
+              htmlFor="is_sold"
+              className="text-sm font-semibold text-gray-700 cursor-pointer"
+            >
               Mark as Sold
             </label>
           </div>
@@ -268,7 +273,7 @@ const ProductForm = ({
           <button
             type="submit"
             disabled={isLoading}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold text-sm rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/35 transition-all duration-200 disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold text-sm rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/35 transition-all duration-200 disabled:opacity-50"
           >
             {isLoading ? (
               <span>Saving...</span>

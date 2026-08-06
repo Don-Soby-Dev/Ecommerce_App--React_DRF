@@ -4,16 +4,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProductBySlug } from "../features/products/productsThunk";
 import { clearSelectedProduct } from "../features/products/productsSlice";
 import { addCartItem } from "../features/cart/cartThunk";
-import { ArrowLeft, Tag, Calendar, User, ShoppingCart, CheckCircle, XCircle, Check } from "lucide-react";
+import {
+  ArrowLeft,
+  Tag,
+  Calendar,
+  User,
+  ShoppingCart,
+  CheckCircle,
+  XCircle,
+  Check,
+} from "lucide-react";
 
 const ProductDetailPage = () => {
   const { slug } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { selected: product, status, error } = useSelector(
-    (state) => state.products
-  );
+  const {
+    selected: product,
+    status,
+    error,
+  } = useSelector((state) => state.products);
   const { accessToken } = useSelector((state) => state.auth);
 
   const [addStatus, setAddStatus] = useState("idle"); // 'idle' | 'loading' | 'added' | 'error'
@@ -63,8 +74,12 @@ const ProductDetailPage = () => {
     return (
       <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
         <div className="bg-white rounded-3xl p-8 border border-gray-100 max-w-md text-center shadow-sm">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Product Not Found</h2>
-          <p className="text-gray-500 text-sm mb-6">{error || "The requested product does not exist."}</p>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">
+            Product Not Found
+          </h2>
+          <p className="text-gray-500 text-sm mb-6">
+            {error || "The requested product does not exist."}
+          </p>
           <Link
             to="/products"
             className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-all"
@@ -127,7 +142,10 @@ const ProductDetailPage = () => {
               <div className="border-t border-b border-gray-100 py-4 my-4 space-y-3 text-sm">
                 <div className="flex items-center gap-2 text-gray-600">
                   <User className="w-4 h-4 text-gray-400" />
-                  <span>Seller ID: <strong className="text-gray-800">{product.seller}</strong></span>
+                  <span>
+                    Seller ID:{" "}
+                    <strong className="text-gray-800">{product.seller}</strong>
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-600">
                   <Calendar className="w-4 h-4 text-gray-400" />
@@ -142,12 +160,16 @@ const ProductDetailPage = () => {
                   {product.is_sold ? (
                     <>
                       <XCircle className="w-4 h-4 text-red-500" />
-                      <span className="text-red-600 font-semibold">Item is Sold</span>
+                      <span className="text-red-600 font-semibold">
+                        Item is Sold
+                      </span>
                     </>
                   ) : (
                     <>
                       <CheckCircle className="w-4 h-4 text-emerald-500" />
-                      <span className="text-emerald-600 font-semibold">Available for purchase</span>
+                      <span className="text-emerald-600 font-semibold">
+                        Available for purchase
+                      </span>
                     </>
                   )}
                 </div>
@@ -172,18 +194,37 @@ const ProductDetailPage = () => {
               )}
               <button
                 onClick={handleAddToCart}
-                disabled={product.is_sold || addStatus === "loading" || addStatus === "added"}
+                disabled={
+                  product.is_sold ||
+                  addStatus === "loading" ||
+                  addStatus === "added"
+                }
                 className={`w-full py-4 px-6 font-bold text-base rounded-2xl shadow-xl transition-all duration-200 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
                   addStatus === "added"
                     ? "bg-emerald-600 text-white shadow-emerald-500/25"
-                    : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-indigo-500/25 disabled:opacity-50"
+                    : "bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-indigo-500/25 disabled:opacity-50"
                 }`}
               >
                 {addStatus === "loading" ? (
                   <>
-                    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    <svg
+                      className="animate-spin h-5 w-5 text-white"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="none"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
                     </svg>
                     Adding...
                   </>
