@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "./authThunks";
 import { apiRegisterUser } from "./authAPI";
+import { validateEmail, validatePassword } from "../../utils/validation";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -19,17 +20,6 @@ const AuthForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { status } = useSelector((state) => state.auth);
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[\w\.-]+@[\w\.-]+\.\w+$/;
-    return emailRegex.test(email);
-  };
-
-  const validatePassword = (password) => {
-    // Requires min 8 chars, uppercase, number, special char, no whitespace
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s])\S{8,}$/;
-    return passwordRegex.test(password);
-  };
 
   const validate = () => {
     const errors = {};
