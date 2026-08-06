@@ -1,5 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Trash2, Save, X, PlusCircle } from "lucide-react";
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { Trash2, Save, PlusCircle } from "lucide-react";
+import {
+  validateProductTitle,
+  validateProductPrice,
+  validateProductImgUrl,
+  validateProductCategory,
+} from "../../utils/validators";
 
 const ProductForm = ({
   initialData = null,
@@ -9,79 +16,46 @@ const ProductForm = ({
   isLoading = false,
   apiError = null,
 }) => {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    price: "",
-    category: "",
-    img_url: "",
-    is_sold: false,
+  const buildDefaultValues = (data = null, availableCategories = []) => ({
+    title: data?.title || "",
+    description: data?.description || "",
+    price: data?.price ?? "",
+    category:
+      data?.category ||
+      data?.category_id ||
+      (availableCategories.length > 0 ? availableCategories[0].id : ""),
+    img_url: data?.img_url || "",
+    is_sold: Boolean(data?.is_sold),
   });
 
-  const [formErrors, setFormErrors] = useState({});
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setError,
+    clearErrors,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    defaultValues: buildDefaultValues(initialData, categories),
+    mode: "onSubmit",
+  });
 
   useEffect(() => {
-    if (initialData) {
-      setFormData({
-        title: initialData.title || "",
-        description: initialData.description || "",
-        price: initialData.price || "",
-        category: initialData.category || initialData.category_id || "",
-        img_url: initialData.img_url || "",
-        is_sold: initialData.is_sold || false,
-      });
+    reset(buildDefaultValues(initialData, categories));
+  }, [initialData, categories, reset]);
+
+  useEffect(() => {
+    if (apiError) {
+      const message =
+        typeof apiError === "string" ? apiError : JSON.stringify(apiError);
+      setError("root", { type: "server", message });
     } else {
-      setFormData({
-        title: "",
-        description: "",
-        price: "",
-        category: categories.length > 0 ? categories[0].id : "",
-        img_url: "",
-        is_sold: false,
-      });
+      clearErrors("root");
     }
-  }, [initialData, categories]);
+  }, [apiError, clearErrors, setError]);
 
-  const validate = () => {
-    const errors = {};
-    if (!formData.title.trim()) {
-      errors.title = "Title is required.";
-    }
-    if (!formData.price) {
-      errors.price = "Price is required.";
-    } else if (parseFloat(formData.price) < 0) {
-      errors.price = "Price cannot be negative.";
-    }
-    if (!formData.category) {
-      errors.category = "Please select a category.";
-    }
-    if (!formData.img_url.trim()) {
-      errors.img_url = "Image URL is required.";
-    } else {
-      try {
-        new URL(formData.img_url);
-      } catch (_) {
-        errors.img_url = "Please enter a valid URL.";
-      }
-    }
-    return errors;
-  };
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    const val = type === "checkbox" ? checked : value;
-    setFormData((prev) => ({ ...prev, [name]: val }));
-    setFormErrors((prev) => ({ ...prev, [name]: "" }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const errors = validate();
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
-    onSubmit(formData);
+  const onSubmitForm = (data) => {
+    onSubmit(data);
   };
 
   const handleDeleteClick = () => {
@@ -109,13 +83,20 @@ const ProductForm = ({
         </h2>
       </div>
 
-      {apiError && (
-        <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
-          {typeof apiError === "string" ? apiError : JSON.stringify(apiError)}
+      {errors.root && (
+        <div
+          role="alert"
+          className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm"
+        >
+          {errors.root.message}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} noValidate className="space-y-5">
+      <form
+        onSubmit={handleSubmit(onSubmitForm)}
+        noValidate
+        className="space-y-5"
+      >
         {/* Title */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1.5">
@@ -123,19 +104,17 @@ const ProductForm = ({
           </label>
           <input
             type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
+            {...register("title", { validate: validateProductTitle })}
             placeholder="e.g. iPhone 13 Pro Max - 256GB"
             className={`w-full px-4 py-3 rounded-xl border ${
-              formErrors.title
+              errors.title
                 ? "border-red-500 focus:ring-red-500"
                 : "border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
             } bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-opacity-20 text-sm transition-all`}
           />
-          {formErrors.title && (
+          {errors.title && (
             <p className="mt-1 text-xs text-red-600 font-medium">
-              {formErrors.title}
+              {errors.title.message}
             </p>
           )}
         </div>
@@ -147,11 +126,9 @@ const ProductForm = ({
               Category *
             </label>
             <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
+              {...register("category", { validate: validateProductCategory })}
               className={`w-full px-4 py-3 rounded-xl border ${
-                formErrors.category
+                errors.category
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
               } bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-opacity-20 text-sm transition-all text-gray-700`}
@@ -163,9 +140,9 @@ const ProductForm = ({
                 </option>
               ))}
             </select>
-            {formErrors.category && (
+            {errors.category && (
               <p className="mt-1 text-xs text-red-600 font-medium">
-                {formErrors.category}
+                {errors.category.message}
               </p>
             )}
           </div>
@@ -177,19 +154,18 @@ const ProductForm = ({
             <input
               type="number"
               step="0.01"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
+              inputMode="decimal"
+              {...register("price", { validate: validateProductPrice })}
               placeholder="0.00"
               className={`w-full px-4 py-3 rounded-xl border ${
-                formErrors.price
+                errors.price
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
               } bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-opacity-20 text-sm transition-all`}
             />
-            {formErrors.price && (
+            {errors.price && (
               <p className="mt-1 text-xs text-red-600 font-medium">
-                {formErrors.price}
+                {errors.price.message}
               </p>
             )}
           </div>
@@ -202,19 +178,17 @@ const ProductForm = ({
           </label>
           <input
             type="url"
-            name="img_url"
-            value={formData.img_url}
-            onChange={handleChange}
+            {...register("img_url", { validate: validateProductImgUrl })}
             placeholder="https://example.com/image.jpg"
             className={`w-full px-4 py-3 rounded-xl border ${
-              formErrors.img_url
+              errors.img_url
                 ? "border-red-500 focus:ring-red-500"
                 : "border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
             } bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-opacity-20 text-sm transition-all`}
           />
-          {formErrors.img_url && (
+          {errors.img_url && (
             <p className="mt-1 text-xs text-red-600 font-medium">
-              {formErrors.img_url}
+              {errors.img_url.message}
             </p>
           )}
         </div>
@@ -225,10 +199,8 @@ const ProductForm = ({
             Description
           </label>
           <textarea
-            name="description"
+            {...register("description")}
             rows="4"
-            value={formData.description}
-            onChange={handleChange}
             placeholder="Provide details about the item's condition, features, etc."
             className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none text-sm transition-all"
           />
@@ -240,9 +212,7 @@ const ProductForm = ({
             <input
               type="checkbox"
               id="is_sold"
-              name="is_sold"
-              checked={formData.is_sold}
-              onChange={handleChange}
+              {...register("is_sold")}
               className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300"
             />
             <label
@@ -261,7 +231,7 @@ const ProductForm = ({
               <button
                 type="button"
                 onClick={handleDeleteClick}
-                disabled={isLoading}
+                disabled={isLoading || isSubmitting}
                 className="inline-flex items-center gap-2 px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-sm rounded-xl transition-all disabled:opacity-50"
               >
                 <Trash2 className="w-4 h-4" />
@@ -272,10 +242,10 @@ const ProductForm = ({
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || isSubmitting}
             className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold text-sm rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/35 transition-all duration-200 disabled:opacity-50"
           >
-            {isLoading ? (
+            {isLoading || isSubmitting ? (
               <span>Saving...</span>
             ) : isEditing ? (
               "Update Listing"
